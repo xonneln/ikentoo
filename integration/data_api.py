@@ -23,12 +23,7 @@ class IkentooData(object):
         self.branches = branches
 
     def get_by_dates(self, dates):
-        transactions = {}
-
-        for branch, branch_id in self.branches.items():
-            transactions[branch] = self.get_by_dates_branch(dates, branch_id)
-
-        return transactions
+        return {branch: self.get_by_dates_branch(dates, branch_id) for branch, branch_id in self.branches.items()}
 
     def get_by_dates_branch(self, dates, branch_id):
         transactions = {}
