@@ -39,3 +39,20 @@ class TestIkentooData(TestCase):
 
         for branch in self.branches.keys():
             self.assertEqual(transactions[branch][date], self.json)
+
+    @mock.patch('integration.data_api.requests', autospec=True)
+    def test_get_by_dates_with_snapshot(self, mock_requests):
+        mock_response = mock.Mock(spec=requests.models.Response)
+        mock_response.status_code = 200
+        mock_response.json.return_value = self.json
+
+        mock_requests.get.return_value = mock_response
+
+        dates = [datetime.date(2018, 12, 31), datetime.date(2019, 1, 1)]
+        snapshots = {'Miami Beach': {datetime.date(2018, 12, 31): self.json}}
+
+        transactions = self.ikentoo.get_by_dates(dates, snapshots=snapshots)
+
+        for branch in self.branches.keys():
+            for date in dates:
+                self.assertEqual(transactions[branch][date], self.json)
